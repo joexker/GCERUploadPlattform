@@ -9,6 +9,7 @@ using api.Interfaces;
 using api.Mappers;
 using api.Models;
 using api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -20,20 +21,78 @@ namespace api.Controllers
     {
         
         private readonly IVideoRepository _videorepo;
-        private readonly ITeamRepository _teamrepo;
 
         private readonly string _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
 
-        public VideoController(IVideoRepository videorepo, ITeamRepository teamrepo)
+        public VideoController(IVideoRepository videorepo)
         {
             _videorepo = videorepo;
-            _teamrepo = teamrepo;
             if (!Directory.Exists(_uploadPath))
             {
                 Directory.CreateDirectory(_uploadPath);
             }
         }
 
+        
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var videos = await _videorepo.GetAllAsync();
+
+            return Ok(videos);
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetAllFromTeam([FromRoute] int id)
+        {
+            // TODO: add the directories 
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var videos = await _videorepo.GetAllFromTeamAsync(id);
+
+            return Ok(videos);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] VideoUpdateDto updateDto)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var videoModel = await _videorepo.UpdateAsync(id, updateDto);
+
+            if(videoModel == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(videoModel);
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var videoModel = await _videorepo.DeleteAsync(id);
+
+            if(videoModel == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
         
         private async Task<Video?> UploadBase(int id, String title, IFormFile file, bool uploadInTeam)
         {     
@@ -60,6 +119,7 @@ namespace api.Controllers
         }
         
         [HttpPost("team/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UploadTeam([FromRoute] int id, String title, IFormFile file)
         {
             bool ok = false;
@@ -92,6 +152,7 @@ namespace api.Controllers
         }
 
         [HttpPost("directory/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UploadDirectory([FromRoute] int id, String title, IFormFile file)
         {bool ok = false;
             foreach(String type in GetMimeTypes().Keys)
@@ -123,18 +184,10 @@ namespace api.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllFromTeam([FromRoute] int id)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var videos = await _videorepo.GetAllFromTeamAsync(id);
-
-            return Ok(videos);
-        }
+        
 
         [HttpGet("video/{id}")]
+        [Authorize]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if(!ModelState.IsValid)
@@ -165,7 +218,8 @@ namespace api.Controllers
             return File(memory, GetContentType(path), videoModel.Title + "." + videoModel.videoPath.Split(".").Last());
         }
 
-        [HttpGet("details/{id:int}")]
+        [HttpGet("videodetails/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetbyIdDetails([FromRoute] int id)
         {
             if(!ModelState.IsValid)
@@ -181,49 +235,10 @@ namespace api.Controllers
             return Ok(video.ToDownloadDto());
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
 
-            var videos = await _videorepo.GetAllAsync();
+        
 
-            return Ok(videos);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] VideoUpdateDto updateDto)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var videoModel = await _videorepo.UpdateAsync(id, updateDto);
-
-            if(videoModel == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(videoModel);
-        }
-
-        [HttpDelete]
-        [Route("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var videoModel = await _videorepo.DeleteAsync(id);
-
-            if(videoModel == null)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
+        
 
         private string GetContentType(string path)
         {

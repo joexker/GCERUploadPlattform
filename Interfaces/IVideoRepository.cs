@@ -16,5 +16,6 @@ namespace api.Interfaces
         Task<Video?> GetByIdAsync(int id);
         Task<Video?> UpdateAsync(int id, VideoUpdateDto updateDto);
         Task<Video?> DeleteAsync(int id);
+        public Task<bool> VideoExists(int id);
     }
 }

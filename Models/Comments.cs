@@ -12,6 +12,5 @@ namespace api.Models
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         public int? VideoId { get; set; } // Foreigng Key
-        public Video? Video { get; set; }
     }
 }

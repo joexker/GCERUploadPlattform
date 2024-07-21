@@ -6,6 +6,7 @@ using api.Dtos.Directories;
 using api.Interfaces;
 using api.Mappers;
 using api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -22,6 +23,7 @@ namespace api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
             if(!ModelState.IsValid)
@@ -33,6 +35,7 @@ namespace api.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if(!ModelState.IsValid)
@@ -49,6 +52,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] DirectoryDto createDto)
         {
             if(!ModelState.IsValid)
@@ -65,6 +69,7 @@ namespace api.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] DirectoryUpdateDto updateDto)
         {
             if(!ModelState.IsValid)
@@ -82,6 +87,7 @@ namespace api.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             if(!ModelState.IsValid)
@@ -97,6 +103,18 @@ namespace api.Controllers
             return NoContent();
         }
 
+        [HttpGet("team/{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetAllFromTeam([FromRoute] int id)
+        {
+            // TODO: add the directories 
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var dirs = await _dirrepo.GetAllFromTeamAsync(id);
+
+            return Ok(dirs);
+        }
 
     }
 }

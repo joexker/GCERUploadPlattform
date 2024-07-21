@@ -55,6 +55,15 @@ namespace api.Repository
             return await _context.Directories.Include(c => c.Videos).FirstOrDefaultAsync(i => i.Id == id);
         }
 
+        public async Task<List<VideoDirectory>> GetAllFromTeamAsync(int id)
+        {
+            var dirmodel = _context.Directories.AsQueryable();
+
+            dirmodel.Where(v => v.TeamId == id);
+
+            return await dirmodel.ToListAsync();
+        }
+
         public async Task<VideoDirectory?> UpdateAsync(int id, DirectoryUpdateDto updateDto)
         {
             var existingDirectory = await _context.Directories.FirstOrDefaultAsync(x => x.Id == id);

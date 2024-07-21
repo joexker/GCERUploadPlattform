@@ -32,12 +32,12 @@ namespace api.Repository
 
         public async Task<List<Video>> GetAllAsync()
         {
-            return await _context.Video.ToListAsync();
+            return await _context.Video.Include(c => c.Comments).ToListAsync();
         }
 
         public async Task<List<Video>> GetAllFromTeamAsync(int id)
         {
-            var videomodel = _context.Video.AsQueryable();
+            var videomodel = _context.Video.Include(c => c.Comments).AsQueryable();
 
             videomodel.Where(v => v.TeamId == id);
 
@@ -46,7 +46,7 @@ namespace api.Repository
 
         public async Task<Video?> GetByIdAsync(int id)
         {
-            return await _context.Video.FirstOrDefaultAsync(v => v.Id == id);
+            return await _context.Video.Include(c => c.Comments).FirstOrDefaultAsync(v => v.Id == id);
         }
 
         public async Task<Video?> UpdateAsync(int id, VideoUpdateDto updateDto)
@@ -92,6 +92,11 @@ namespace api.Repository
             await _context.SaveChangesAsync();
 
             return videoModel;
+        }
+
+        public Task<bool> VideoExists(int id)
+        {
+            return _context.Video.AnyAsync(s => s.Id == id);
         }
     }
 }

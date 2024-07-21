@@ -13,5 +13,6 @@ namespace api.Interfaces
         Task<VideoDirectory?> CreateAsync(VideoDirectory teamModel);
         Task<VideoDirectory?> UpdateAsync(int id, DirectoryUpdateDto updateDto);
         Task<VideoDirectory?> DeleteAsync(int id);
+        Task<List<VideoDirectory>> GetAllFromTeamAsync(int id);
     }
 }
