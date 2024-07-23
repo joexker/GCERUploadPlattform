@@ -1,5 +1,6 @@
 <script setup>
 import {ref} from 'vue'
+import TeamMenu from "@/components/TeamMenu.vue";
 
 const itemRefs = ref([])
 
@@ -36,8 +37,8 @@ const files = ref([
     videoPath: "image4.png"
   },
   {
-    Title: "Image 5",
-    videoPath: "image5.png"
+    Title: "asdasihdiasjd",
+    videoPath: "image5.mp4"
   },
   {
     Title: "Image 6",
@@ -121,13 +122,13 @@ const files = ref([
     </header>
     <ul>
       <li v-for="dir in directories" ref="itemRefs" class="directory">
-        <img src="./open-folder.png">
+        <img src="./icons/open-folder.png">
         <p>{{ dir }}</p>
       </li>
       <li v-for="file in files" ref="itemRefs"
           :class="{ video: file.videoPath.endsWith('.mp4'), image: file.videoPath.endsWith('.png')}">
-        <img v-if="file.videoPath.endsWith('.mp4')" src="./video.png">
-        <img v-if="file.videoPath.endsWith('.png')" src="./image.png">
+        <img v-if="file.videoPath.endsWith('.mp4')" src="./icons/video.png">
+        <img v-if="file.videoPath.endsWith('.png')" src="./icons/image.png">
         <p>{{ file.Title }}</p>
       </li>
 
@@ -170,10 +171,11 @@ const files = ref([
     </ul>
     <footer>
       <button>
-        <img src="./upload.png">
+        <img src="./icons/upload.png">
       </button>
     </footer>
   </div>
+  <TeamMenu />
 </template>
 
 <style scoped>
@@ -226,6 +228,7 @@ ul {
   flex-direction: column;
   align-items: center;
   padding: 0;
+  overflow: auto;
 }
 
 .directory, .video, .image {

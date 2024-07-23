@@ -1,7 +1,8 @@
 <script setup>
 import Login from "@/components/Login.vue";
 import JoexBackground from "@/components/JoexBackground.vue";
-import Team from "@/components/icons/Team.vue";
+import Team from "@/components/Team.vue";
+import TeamMenu from "@/components/TeamMenu.vue";
 
 </script>
 
@@ -9,7 +10,7 @@ import Team from "@/components/icons/Team.vue";
 
   <main>
     <JoexBackground />
-    <Team/>
+    <Team />
   </main>
 </template>
 
