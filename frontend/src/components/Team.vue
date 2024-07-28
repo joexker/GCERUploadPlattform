@@ -1,11 +1,40 @@
 <script setup>
 import {ref} from 'vue'
 import TeamMenu from "@/components/TeamMenu.vue";
-
+import {addDir, addFile, currentTeamDir, video, addTeam} from './store.js';
 const itemRefs = ref([])
 
+
+function toggleAddOptions() {
+  const addoptions = document.getElementById('addOptions');
+
+  if (addoptions.classList.contains("hidden")) {
+    addoptions.classList.remove("hidden")
+    return;
+  }
+
+  addoptions.classList.add("hidden");
+}
+
 // api call to get directories
-const directories = ref(["Seeding Round 1", "Seeding Round 2", "Double Elimination", "Finals"])
+const directories = ref([
+  {
+    Title: "Seeding Round 1",
+    Id: 0
+  },
+  {
+    Title: "Seeding Round 2",
+    Id: 1
+  },
+  {
+    Title: "Double Elimination",
+    Id: 2
+  },
+  {
+    Title: "Finals",
+    Id: 3
+  }
+])
 
 // api get team with id
 const team = ref({
@@ -18,95 +47,98 @@ const team = ref({
 const files = ref([
   {
     Title: "Video 1",
-    videoPath: "video1.mp4"
+    videoPath: "video1.mp4",
+    Id: 0
   },
   {
     Title: "Image 4",
-    videoPath: "image1.mp4"
+    videoPath: "image1.mp4",
+    Id: 1
   },
   {
     Title: "Image 2",
-    videoPath: "image2.png"
+    videoPath: "image2.png",
+    Id: 2
   },
   {
     Title: "Image 3",
-    videoPath: "image3.png"
+    videoPath: "image3.png",
+    Id: 3
   },
   {
     Title: "Image 4",
-    videoPath: "image4.png"
+    videoPath: "image4.png",
+    Id: 4
   },
   {
     Title: "asdasihdiasjd",
-    videoPath: "image5.mp4"
+    videoPath: "image5.mp4",
+    Id: 5
   },
   {
     Title: "Image 6",
-    videoPath: "image6.png"
+    videoPath: "image6.png",
+    Id: 6
   },
   {
     Title: "Image 7",
-    videoPath: "image7.png"
+    videoPath: "image7.png",
+    Id: 7
   },
   {
     Title: "Image 8",
-    videoPath: "image8.png"
+    videoPath: "image8.png",
+    Id: 8
   },
   {
     Title: "Image 9",
-    videoPath: "image9.png"
+    videoPath: "image9.png",
+    Id: 9
   },
   {
     Title: "Image 10",
-    videoPath: "image10.png"
+    videoPath: "image10.png",
+    Id: 10
   },
   {
     Title: "Image 11",
-    videoPath: "image11.png"
+    videoPath: "image11.png",
+    Id: 11
   },
   {
     Title: "Image 12",
-    videoPath: "image12.png"
+    videoPath: "image12.png",
+    Id: 12
   },
   {
     Title: "Image 13",
-    videoPath: "image13.png"
+    videoPath: "image13.png",
+    Id: 13
   },
   {
     Title: "Image 14",
-    videoPath: "image14.png"
+    videoPath: "image14.png",
+    Id: 14
   },
   {
     Title: "Image 15",
-    videoPath: "image15.png"
+    videoPath: "image15.png",
+    Id: 15
   },
   {
     Title: "Image 16",
-    videoPath: "image16.png"
+    videoPath: "image16.png",
+    Id: 16
   },
   {
     Title: "Image 17",
-    videoPath: "image17.png"
+    videoPath: "image17.png",
+    Id: 17
   },
   {
     Title: "Image 18",
-    videoPath: "image18.png"
-  },
-  {
-    Title: "Image 19",
-    videoPath: "image19.png"
-  },
-  {
-    Title: "Image 20",
-    videoPath: "image20.png"
-  },
-  {
-    Title: "Image 21",
-    videoPath: "image21.png"
-  },
-  {
-    Title: "Image 22",
-    videoPath: "image22.png"
+    videoPath: "image18.png",
+    Id: 18
   }
 ])
 </script>
@@ -121,57 +153,33 @@ const files = ref([
       <hr>
     </header>
     <ul>
-      <li v-for="dir in directories" ref="itemRefs" class="directory">
+      <li v-for="dir in directories" :id="dir.Id" ref="itemRefs" class="directory" @click="currentTeamDir.setToDir(); currentTeamDir.updateDir(dir.Id)">
         <img src="./icons/open-folder.png">
-        <p>{{ dir }}</p>
+        <p>{{ dir.Title }}</p>
       </li>
-      <li v-for="file in files" ref="itemRefs"
-          :class="{ video: file.videoPath.endsWith('.mp4'), image: file.videoPath.endsWith('.png')}">
+      <li v-for="file in files" ref="itemRefs" v-bind:id="file.Id"
+          :class="{ video: file.videoPath.endsWith('.mp4'), image: file.videoPath.endsWith('.png')}"
+          @click="video.updateVideo(file.Id)">
         <img v-if="file.videoPath.endsWith('.mp4')" src="./icons/video.png">
         <img v-if="file.videoPath.endsWith('.png')" src="./icons/image.png">
         <p>{{ file.Title }}</p>
       </li>
 
-      <!--      <li class="directory">-->
-      <!--        <img src="./open-folder.png">-->
-      <!--        <p>Directory 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="directory">-->
-      <!--        <img src="./open-folder.png">-->
-      <!--        <p>Directory 2</p>-->
-      <!--      </li>-->
-      <!--      <li class="video">-->
-      <!--        <img src="./video.png">-->
-      <!--        <p>Video 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="image">-->
-      <!--        <img src="./image.png">-->
-      <!--        <p>Image 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="image">-->
-      <!--        <img src="./image.png">-->
-      <!--        <p>Image 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="image">-->
-      <!--        <img src="./image.png">-->
-      <!--        <p>Image 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="image">-->
-      <!--        <img src="./image.png">-->
-      <!--        <p>Image 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="image">-->
-      <!--        <img src="./image.png">-->
-      <!--        <p>Image 1</p>-->
-      <!--      </li>-->
-      <!--      <li class="image">-->
-      <!--        <img src="./image.png">-->
-      <!--        <p>Image 1</p>-->
-      <!--      </li>-->
     </ul>
     <footer>
-      <button>
-        <img src="./icons/upload.png">
+      <div id="addOptions" class="hidden" tabindex="0">
+        <button id="file" @click="addFile.toggle(), toggleAddOptions()">
+          File
+        </button>
+        <button id="dir" @click="addDir.toggle(), toggleAddOptions()">
+          Directory
+        </button>
+        <button id="dir" @click="addTeam.toggle(), toggleAddOptions()">
+          Team
+        </button>
+      </div>
+      <button id="addbtn" @click="toggleAddOptions">
+        <img src="./icons/add.png">
       </button>
     </footer>
   </div>
@@ -302,7 +310,37 @@ footer button {
   align-items: center;
 }
 
+#addOptions {
+  position: absolute;
+  bottom: 100px;
+  right: 10px;
+  width: 150px;
+  height: 200px;
+  padding: 20px;
+  background-color: white;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+#addOptions button {
+  width: 100%;
+  height: 50px;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+
+}
+
 button * {
-  height: 60%;
+  height: 50%;
 }
 </style>

@@ -1,6 +1,9 @@
 <script setup>
 
 import {ref} from "vue";
+import VIdeoPlayer from "@/components/VIdeoPlayer.vue";
+import { currentTeamDir } from './store.js';
+
 
 const teams = ref([
   {
@@ -116,7 +119,7 @@ const itemRefs = ref([])
       <h1>Teams</h1>
     </header>
     <ul>
-      <li v-for="team in teams" :id="team.Id" ref="itemRefs" class="team">
+      <li v-for="team in teams" :id="team.Id" ref="itemRefs" class="team" @click="currentTeamDir.updateTeam(team.Id); currentTeamDir.setToTeam()">
         <div id="team">{{ team.Name }}</div>
         <div id="teamnumber">{{ team.TeamNumber }}</div>
       </li>
@@ -163,7 +166,7 @@ const itemRefs = ref([])
 header {
   position: fixed;
   background-color: black;
-  width: 100%;
+  width: 50%;
   height: 80px;
   display: flex;
   align-items: center;
